@@ -1,0 +1,3 @@
+import type {VercelRequest,VercelResponse} from '@vercel/node';
+import {findStudent,publicStudent} from '../_lib/studentStore';
+export default async function handler(req:VercelRequest,res:VercelResponse){if(req.method!=='GET')return res.status(405).json({detail:'Method tidak didukung.'});const raw=String(req.headers.cookie||'').match(/(?:^|;\s*)mls_session=([^;]+)/)?.[1];if(!raw)return res.status(200).json(null);try{const s=JSON.parse(decodeURIComponent(raw));const student=await findStudent(String(s.email||''));return res.status(200).json(student?publicStudent(student):null)}catch{return res.status(200).json(null)}}
