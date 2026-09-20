@@ -105,6 +105,7 @@ interface Resource {
   is_public: boolean;
   created_by: string;
   level: string;
+  subtest?: string;
 }
 interface LiveClass {
   id: string;
@@ -182,6 +183,16 @@ const aiyImage = "/api/assets/aiy.png";
 const ganeImage = "/api/assets/gane.png";
 const levelReference =
   "https://customer-assets-jai6qajn.emergentagent.net/wingman/b606a45d-f173-428d-b300-6bb114194e84/attachments/9d42367e82fc469a97b5a9b34a78d16a_image.bin";
+
+const WACAWACI_SUBTESTS = [
+  { id: "pu", label: "Penalaran Umum (PU)", short: "PU", icon: Hammer },
+  { id: "ppu", label: "Pengetahuan & Pemahaman Umum (PPU)", short: "PPU", icon: BookOpen },
+  { id: "pbm", label: "Pemahaman Bacaan & Menulis (PBM)", short: "PBM", icon: FileText },
+  { id: "pk", label: "Pengetahuan Kuantitatif (PK)", short: "PK", icon: Zap },
+  { id: "lit_indo", label: "Literasi Bahasa Indonesia", short: "LIT INDO", icon: BookOpen },
+  { id: "lit_inggris", label: "Literasi Bahasa Inggris", short: "LIT INGGRIS", icon: BookOpen },
+  { id: "pm", label: "Penalaran Matematika (PM)", short: "PM", icon: Zap },
+] as const;
 
 const mascots = [
   { name: "Cece", image: ceceImage, role: "Si perangkai kata" },
@@ -2119,6 +2130,7 @@ export default function Home() {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [solutions, setSolutions] = useState<Record<string, boolean>>({});
   const [resourceKind, setResourceKind] = useState("video");
+  const [resourceSubtest, setResourceSubtest] = useState("pu");
   const [selectedSession, setSelectedSession] = useState("utbaby-demo-2026");
   const [tryoutAnswers, setTryoutAnswers] = useState<Record<string, number>>(
     {},
@@ -2390,6 +2402,11 @@ export default function Home() {
   const openView = (next: View) => {
     setView(next);
     setNotificationsOpen(false);
+    if (next === "wacawaci") {
+      setResourceSubtest("pu");
+      setResourceKind("video");
+      queryClient.invalidateQueries({ queryKey: ["wacawaci"] });
+    }
     if (next === "rodi" || next === "utbaby") {
       const nextMascot = mascots[Math.floor(Math.random() * mascots.length)];
       setMascot(nextMascot);
@@ -2411,7 +2428,9 @@ export default function Home() {
     ? activeQuestions
     : activeQuestions.slice(0, 6);
   const filteredResources = (resourcesQuery.data ?? []).filter(
-    (item) => item.kind === resourceKind,
+    (item) =>
+      item.subtest === resourceSubtest &&
+      item.kind === resourceKind,
   );
   const activeLive = liveQuery.data?.[0];
   useEffect(() => {
@@ -3044,6 +3063,38 @@ export default function Home() {
               title="WACAWACI"
               subtitle={`Loker materi ${levels[safeUser.level].label}`}
             />
+            <section
+              className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
+              data-testid="wacawaci-subtest-lockers"
+            >
+              {WACAWACI_SUBTESTS.map((locker, index) => {
+                const Icon = locker.icon;
+                const active = resourceSubtest === locker.id;
+                return (
+                  <button
+                    type="button"
+                    key={locker.id}
+                    onClick={() => setResourceSubtest(locker.id)}
+                    className={`pixel-card border-0 p-4 text-left transition ${active ? "bg-yellow-300 shadow-[5px_5px_0_#2e1065]" : "bg-white hover:bg-pink-100"}`}
+                    data-testid={`wacawaci-locker-${locker.id}`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-[10px] font-black text-violet-700">
+                        0{index + 1}
+                      </span>
+                      <Icon className="h-5 w-5 text-violet-950" />
+                    </div>
+                    <p className="mt-4 font-black text-violet-950">
+                      {locker.short}
+                    </p>
+                    <p className="mt-1 text-[11px] font-bold leading-snug text-violet-800">
+                      {locker.label}
+                    </p>
+                  </button>
+                );
+              })}
+            </section>
+
             <div className="mt-6 flex gap-3">
               <PixelButton
                 onClick={() => setResourceKind("video")}
@@ -3093,6 +3144,16 @@ export default function Home() {
                 </article>
               ))}
             </section>
+            {resourcesQuery.isFetched && filteredResources.length === 0 && (
+              <div className="pixel-card mt-6 bg-white p-8 text-center">
+                <p className="font-black text-violet-950">
+                  Belum ada {resourceKind === "video" ? "video" : "modul"} untuk loker ini.
+                </p>
+                <p className="mt-2 text-xs text-slate-500">
+                  Materi diambil dari pemetaan folder Google Drive Wacawaci.
+                </p>
+              </div>
+            )}
           </div>
         </main>
       )}
