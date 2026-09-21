@@ -2333,7 +2333,7 @@ export default function Home() {
         const form = new FormData();
         form.append("file", resourceFile);
         return apiUpload<Resource>(
-          `/wacawaci/upload?mentor_code=${encodeURIComponent(mentorCode)}&kind=${resourceKind}&title=${encodeURIComponent(resourceTitle)}&description=${encodeURIComponent(resourceDescription)}&level=${codeLevel}`,
+          `/wacawaci/upload?mentor_code=${encodeURIComponent(mentorCode)}&kind=${resourceKind}&subtest=${resourceSubtest}&title=${encodeURIComponent(resourceTitle)}&description=${encodeURIComponent(resourceDescription)}&level=${codeLevel}`,
           form,
         );
       }
@@ -2342,6 +2342,7 @@ export default function Home() {
         kind: resourceKind,
         title: resourceTitle,
         description: resourceDescription,
+        subtest: resourceSubtest,
         url: resourceUrl,
         is_public: true,
         level: codeLevel,
@@ -2778,15 +2779,29 @@ export default function Home() {
           )}
           {adminTab === "wacawaci" && (
             <AdminForm title="UPLOAD WACAWACI">
-              <select
-                value={resourceKind}
-                onChange={(event) => setResourceKind(event.target.value)}
-                className="form-select"
-                data-testid="admin-resource-kind-select"
-              >
-                <option value="video">Video</option>
-                <option value="module">Modul</option>
-              </select>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <select
+                  value={resourceSubtest}
+                  onChange={(event) => setResourceSubtest(event.target.value)}
+                  className="form-select"
+                  data-testid="admin-resource-subtest-select"
+                >
+                  {WACAWACI_SUBTESTS.map((locker) => (
+                    <option key={locker.id} value={locker.id}>
+                      {locker.short} — {locker.label}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value={resourceKind}
+                  onChange={(event) => setResourceKind(event.target.value)}
+                  className="form-select"
+                  data-testid="admin-resource-kind-select"
+                >
+                  <option value="video">Video</option>
+                  <option value="module">Modul</option>
+                </select>
+              </div>
               <Input
                 value={resourceTitle}
                 onChange={(event) => setResourceTitle(event.target.value)}
