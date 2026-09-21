@@ -1,3 +1,4 @@
+// Wacawaci: 7 locker -> Video/Modul, mapped from the configured Google Drive root.
 import type { VercelRequest,VercelResponse } from '@vercel/node';
 import crypto from 'node:crypto';
 import {supabaseConfigured,supabaseRequest} from '../_lib/supabase';
