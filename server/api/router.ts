@@ -14,7 +14,6 @@ const handlers: Record<string, () => Promise<any>> = {
   'admin/mentor-bank/questions': () => import('./admin/mentor-bank/questions'),
   'admin/mentor-bank/tryouts': () => import('./admin/mentor-bank/tryouts'),
   'live-classes': () => import('./live-classes'),
-  'wacawaci/resources': () => import('./wacawaci/resources'),
   'utbaby/sessions': () => import('./utbaby/sessions'),
   'rodi/module': () => import('./rodi/module'),
   'mentor/verify': () => import('./mentor/verify'),
