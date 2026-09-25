@@ -99,6 +99,7 @@ interface Resource {
   is_public: boolean;
   created_by: string;
   level: string;
+  subtest: string;
 }
 
 interface LiveClass {
@@ -516,6 +517,7 @@ const wacawaciResources: Resource[] = [
     is_public: true,
     created_by: "Mentor Koko",
     level: "nguli",
+    subtest: "pk",
   },
   {
     id: "res-2",
@@ -527,6 +529,7 @@ const wacawaciResources: Resource[] = [
     is_public: true,
     created_by: "Mentor Cece",
     level: "mandor",
+    subtest: "ppu",
   },
   {
     id: "res-3",
@@ -538,6 +541,7 @@ const wacawaciResources: Resource[] = [
     is_public: true,
     created_by: "Mentor Cece",
     level: "nguli",
+    subtest: "lit_indo",
   },
   {
     id: "res-4",
@@ -549,6 +553,7 @@ const wacawaciResources: Resource[] = [
     is_public: true,
     created_by: "Tim Riset MLS",
     level: "supervisor",
+    subtest: "pm",
   },
 ];
 
@@ -858,7 +863,7 @@ app.get("/api/wacawaci/resources", (_req: Request, res: Response) => {
 });
 
 app.post("/api/wacawaci/resources", (req: Request, res: Response) => {
-  const { kind, title, description, url, level } = req.body;
+  const { kind, title, description, url, level, subtest } = req.body;
   const newRes: Resource = {
     id: `res-${Date.now()}`,
     kind: kind || "ringkasan",
@@ -868,6 +873,7 @@ app.post("/api/wacawaci/resources", (req: Request, res: Response) => {
     is_public: true,
     created_by: "Mentor Malas Belajar",
     level: level || "nguli",
+    subtest: subtest || "pu",
   };
   wacawaciResources.unshift(newRes);
   res.json(newRes);
@@ -878,6 +884,7 @@ app.post("/api/wacawaci/upload", (req: Request, res: Response) => {
   const title = (req.query.title as string) || "Dokumen Unggahan";
   const description = (req.query.description as string) || "Materi diunggah oleh mentor";
   const level = (req.query.level as string) || "nguli";
+  const subtest = (req.query.subtest as string) || "pu";
 
   const newRes: Resource = {
     id: `res-upload-${Date.now()}`,
@@ -888,6 +895,7 @@ app.post("/api/wacawaci/upload", (req: Request, res: Response) => {
     is_public: true,
     created_by: "Mentor Malas Belajar",
     level,
+    subtest,
   };
   wacawaciResources.unshift(newRes);
   res.json(newRes);
